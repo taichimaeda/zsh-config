@@ -1,0 +1,78 @@
+#!/bin/zsh
+
+# Set path shortcuts.
+hash -d w=~/workspace
+hash -d p=~/projects
+hash -d dl=~/Downloads
+hash -d dt=~/Desktop
+hash -d c=~/Desktop/Imperial/Computing
+hash -d c01=~/Desktop/Imperial/Computing/Introduction\ to\ Computer\ Systems
+hash -d c05=~/Desktop/Imperial/Computing/Introduction\ to\ Computer\ Architecture
+hash -d c07=~/Desktop/Imperial/Computing/Introduction\ to\ Databases
+hash -d c08=~/Desktop/Imperial/Computing/Graphs\ and\ Algorithms
+hash -d c09=~/Desktop/Imperial/Computing/Computing\ Practical
+hash -d c16=~/Desktop/Imperial/Computing/Calculus
+hash -d c17=~/Desktop/Imperial/Computing/Linear\ Algebra
+hash -d c18=~/Desktop/Imperial/Computing/Discrete\ Mathematics,\ Logic\ and\ Reasoning
+
+# Set shortcuts for listing directories.
+alias l="ls"
+alias la="ls -a"
+alias ll="ls -lh"
+alias lla="ls -lha"
+alias lg="ls -a | grep -i"
+
+# Set shortcuts for opening applications.
+alias ch="open -a 'Google Chrome'"
+alias st="open -a 'Sublime Text'"
+alias ty="open -a Typora"
+alias sk="open -a Skim"
+
+alias ij="open -a 'IntelliJ IDEA'"
+alias pc="open -a Pycharm"
+alias cl="open -a CLion"
+alias rd="open -a Rider"
+alias ws="open -a WebStorm"
+alias ps="open -a PhpStorm"
+alias dg="open -a DataGrip"
+
+# Set shortcuts for jumping between directories.
+alias j="z"
+alias pd="pushd"
+alias od="popd"
+
+# Set shortcuts to prevent deleting or moving file and directories unintentionally.
+alias mv="mv -iv"
+alias rm="rm -iv"
+
+# Set miscellaneous shortcuts.
+alias edit="vim ~/workspace/config/zsh/custom"
+alias restart="exec -l zsh"
+
+# Mount and unmount the Time Machine Backups drives.
+function mount() {
+    diskutil list | grep 'Time Machine Backups' | awk '{ print "/dev/"$NF }' | xargs -L 1 diskutil mount
+}
+function unmount() {
+    diskutil list | grep 'Time Machine Backups' | awk '{ print "/dev/"$NF }' | xargs -L 1 diskutil unmount
+}
+
+# Reset the SSH configuration.
+function reset() {
+    sed -i .bak "s/shell[0-9]/shell$(($RANDOM % 5 + 1))/" ~/.ssh/config
+    typeset -A servers=(texel 44 sprite 38 cider 6 arc 14 gpu 27 edge 40 vertex 62 ray 26 point 29)
+    for name number in "${(@kv)servers}"; do
+        sed -i .bak "s/${name}[0-9][0-9]/${name}$(printf %02d "$(($RANDOM % $number + 1))")/" ~/.ssh/config
+    done
+    rm -rf ~/.ssh/config.bak
+}
+
+# Clean up the system.
+function cleanup() {
+    brew update && brew upgrade && brew autoremove && brew cleanup && brew doctor
+    rm -f ~/.zsh_history ~/.zshrc-e ~/.zcompdump*
+    rm -rf ~/.viminfo ~/.vim/undo ~/.vim/backup ~/.vim/swap && mkdir ~/.vim/undo ~/.vim/backup ~/.vim/swap
+    rm -f ~/.z ~/.z-e && touch ~/.z
+    find ~ -name ".DS_Store" -type "f" -delete
+}
+
